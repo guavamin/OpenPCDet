@@ -45,7 +45,9 @@ class DemoDataset(DatasetTemplate):
 
     def __getitem__(self, index):
         if self.ext == '.bin':
-            points = np.fromfile(self.sample_file_list[index], dtype=np.float32).reshape(-1, 4)
+            # When loading the .bin file in nuScenesc format, you need to manually change the reshape to (-1, 5)
+            # Likely, for KITTI dataset, change it to (-1, 4)
+            points = np.fromfile(self.sample_file_list[index], dtype=np.float32).reshape(-1, 5)
         elif self.ext == '.npy':
             points = np.load(self.sample_file_list[index])
         else:
