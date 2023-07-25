@@ -136,7 +136,6 @@ def main():
             pred_dicts, _ = model.forward(data_dict)
             inference_end = time.time()
             time_inference.append(inference_end - inference_start)
-            print(pred_dicts[0]['pred_boxes'].shape)
             # V.draw_scenes(
             #     points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
             #     ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels']
@@ -170,7 +169,6 @@ def main():
                 pt[object_idx] = np.array(pt1 + pt2)
 
             NMSed_bbox = torch_nms(torch.FloatTensor(np.array(pt)), pred_dicts[0]['pred_scores'].cpu(), 0.1)
-            
             detections = []
             tracking_start = time.time()
             for NMSed_item in NMSed_bbox:
@@ -186,8 +184,8 @@ def main():
                 if track.class_id == 7 or track.class_id == 8 or track.class_id == 9:
                     frame = cv2.rectangle(frame, box[:2], box[2:], (0, 0, 255), thickness=2)
             
-            # saving_result = np.append(saving_result, {'frame_id': i, 'labels': [tracks[k][3] for k in range(len(tracks))], 'boxes': [[(int(tracks[k][1][0]), int(tracks[k][1][1])), ((int(tracks[k][1][2]), int(tracks[k][1][3])))] for k in range(len(tracks))], 'scores': [tracks[k][2] for k in range(len(tracks))]})
-
+            detection_result = np.append(detection_result, {'frame_id': data_dict['frame_id'], 'labels': [tracks[k][3] for k in range(len(tracks))], 'boxes': [[(int(tracks[k][1][0]), int(tracks[k][1][1])), ((int(tracks[k][1][2]), int(tracks[k][1][3])))] for k in range(len(tracks))], 'scores': [tracks[k][2] for k in range(len(tracks))]})
+    print(detection_result)
     # np.save('../detection_result.npy', detection_result, allow_pickle=True)
 
 
@@ -195,7 +193,7 @@ def main():
     print("data load time per frame:", np.mean(time_load))
     print("inference time per frame:", np.mean(time_inference))
     logger.info('Demo done.')
-    cv2.imwrite('../frame.jpg', frame)
+    # cv2.imwrite('../frame.jpg', frame)
 
 if __name__ == '__main__':
     main()
