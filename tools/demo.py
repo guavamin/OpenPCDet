@@ -142,7 +142,7 @@ def main():
             # )
 
             points=data_dict['points'][:, 1:4].cpu()
-            rotated_np_points = np.array(rotation_matrix(0, 0, 135).dot(points.T).T)
+            rotated_np_points = np.array(rotation_matrix(20, 0, 135).dot(points.T).T)
             point_cloud = [None] * points.shape[0]
             for j in range(len(point_cloud)):
                 # point_cloud[i] = (int(140 + 20*rotated_np_points[i][0]), int(730 + 20.5*rotated_np_points[i][1])) # This is for the old dataset
@@ -153,14 +153,14 @@ def main():
             np_pre_result = np.array(pred_dicts[0]['pred_boxes'].cpu()) # ['x', 'y', 'z', 'x_size', 'y_size', 'z_size', 'yaw', 'x_velosity', 'y_velosity']
             np_labels = np.array(pred_dicts[0]['pred_labels'].cpu())
             
-            np_box_size = np.array(rotation_matrix(0, 0, 135).dot(np_pre_result[:,3:6].T).T)
-            rotated_np_pre_result = np.array(rotation_matrix(0, 0, 135).dot(np_pre_result[:,0:3].T).T)
+            np_box_size = np.array(rotation_matrix(20, 0, 135).dot(np_pre_result[:,3:6].T).T)
+            rotated_np_pre_result = np.array(rotation_matrix(20, 0, 135).dot(np_pre_result[:,0:3].T).T)
             
             object = [None] * pred_dicts[0]['pred_boxes'].cpu().shape[0]
             pt = [None] * pred_dicts[0]['pred_boxes'].cpu().shape[0]
             for k in range(len(object)):
                 # object[i] = (int(140 + 20*rotated_np_pre_result[i][0]), int(730 + 20.5*rotated_np_pre_result[i][1])) # This is for the old dataset
-                object[k] = (int(730 + 20*rotated_np_pre_result[k][0]), int(750 + 20*rotated_np_pre_result[k][1]))
+                object[k] = (int(730 + 20*rotated_np_pre_result[k][0]), int(730 + 20*rotated_np_pre_result[k][1]))
 
             for object_idx in range(len(object)):
                 rotated_np_box_size = rotation_matrix(0, 0, np_pre_result[object_idx,6]/np.pi*180).dot(np_box_size[object_idx].T).T
